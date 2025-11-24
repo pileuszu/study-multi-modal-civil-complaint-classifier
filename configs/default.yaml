@@ -1,0 +1,26 @@
+# Default configuration for civil complaint classifier
+
+model:
+  name: "Bingsu/clip-vit-base-patch32-ko"
+  temperature: 0.07
+
+data:
+  image_dir: "data/raw/images"
+  text_file: "data/raw/complaints.csv"
+  batch_size: 32
+
+training:
+  epochs: 10
+  learning_rate: 1e-5
+  weight_decay: 0.01
+  save_dir: "models/checkpoints"
+
+evaluation:
+  metrics: ["accuracy", "f1_score", "precision", "recall"]
+  top_k: 5
+
+logging:
+  log_dir: "logs"
+  use_wandb: false
+  use_tensorboard: true
+
