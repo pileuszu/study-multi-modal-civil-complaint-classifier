@@ -1,72 +1,108 @@
 # Multi-Modal Civil Complaint Classifier
 
-멀티모달(이미지 + 텍스트) 기반 민원 분류 연구 프로젝트
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![PyTorch 2.0+](https://img.shields.io/badge/PyTorch-2.0+-ee4c2c.svg)](https://pytorch.org/)
+[![HuggingFace](https://img.shields.io/badge/%F0%9F%A4%97-Transformers-orange.svg)](https://huggingface.co/models)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## 프로젝트 구조
+A research project focused on classifying civil complaints using multi-modal data (Images + Text). This project utilizes **KoCLIP** to perform zero-shot and few-shot classification across 44 distinct categories of civil issues, ranging from road damage to public facility maintenance.
 
-```
+## 🚀 Key Features
+
+- **Multi-Modal Support**: Leverages both visual and textual information for higher accuracy in complaint classification.
+- **KoCLIP Integration**: Utilizes the `Bingsu/clip-vit-base-patch32-ko` model, optimized for the Korean language and visual-text alignment.
+- **Zero-Shot Classification**: Capable of classifying complaints without extensive fine-tuning by leveraging the semantic relationship between complaint descriptions and input data.
+- **Flexible Input**: Supports Image-only, Text-only, or combined Multi-modal inputs.
+- **Extensive Taxonomy**: Handles 44 refined categories covering transportation, environment, public safety, and infrastructure.
+
+## 📁 Project Structure
+
+```text
 study-multi-modal-civil-complaint-classifier/
-├── notebooks/              # Jupyter 노트북 (실험 및 탐색)
-├── src/                    # 소스 코드
-│   ├── models/            # 모델 정의
-│   ├── data/              # 데이터 로더 및 전처리
-│   ├── training/          # 학습 스크립트
-│   ├── evaluation/        # 평가 스크립트
-│   └── utils/             # 유틸리티 함수
-├── data/                   # 데이터 저장소
-│   ├── raw/               # 원본 데이터
-│   ├── processed/         # 전처리된 데이터
-│   └── external/          # 외부 데이터
-├── models/                # 학습된 모델 저장
-├── configs/               # 설정 파일 (YAML/JSON)
-├── experiments/           # 실험 결과
-├── scripts/               # 실행 스크립트
-├── logs/                  # 로그 파일
-└── requirements.txt        # 패키지 의존성
+├── src/
+│   ├── models/            # Core model definitions (CLIP-based classifier)
+│   ├── data/              # Data loading and preprocessing pipelines
+│   ├── training/          # Training and fine-tuning logic
+│   ├── evaluation/        # Metrics and model performance analysis
+│   └── utils/             # Helper functions and logging
+├── notebooks/              # Experimental research and EDA
+├── data/                   # Dataset storage (Raw/Processed/External)
+├── configs/                # Configuration files (YAML)
+├── scripts/                # Standalone execution scripts (Train/Eval)
+├── models/                 # Checkpoints and saved models
+├── experiments/            # Detailed logs and experimental results
+└── requirements.txt        # Dependency specification
 ```
 
-## 설치
+## 🛠️ Getting Started
+
+### Prerequisites
+
+- Python 3.8 or higher
+- CUDA-enabled GPU (optional but recommended for faster inference)
+
+### Installation
 
 ```bash
-# 가상환경 생성 (선택사항)
+# Clone the repository
+git clone https://github.com/pileuszu/study-multi-modal-civil-complaint-classifier.git
+cd study-multi-modal-civil-complaint-classifier
+
+# Create and activate virtual environment
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
 
-# 패키지 설치
+# Install dependencies
 pip install -r requirements.txt
 ```
 
-## 사용 방법
+## 💻 Usage
 
-### 노트북 실행
+### 1. Research & Exploration
+Explore the core logic and run sample predictions using the provided Jupyter notebook:
 ```bash
-jupyter notebook notebooks/
+jupyter notebook notebooks/simple_civil_complaint_classifier.ipynb
 ```
 
-### 학습 실행
+### 2. Model Usage
+You can use the `CLIPComplaintClassifier` directly in your code:
+
+```python
+from src.models.clip_classifier import CLIPComplaintClassifier
+from PIL import Image
+
+# Initialize classifier
+classifier = CLIPComplaintClassifier()
+
+# Define labels (or use defaults)
+labels = ["Road damage (pothole)", "Illegal trash dumping", "Broken streetlight"]
+
+# Predict
+results = classifier.predict_top_k(
+    labels=labels,
+    text="There is a large hole in the middle of the road.",
+    image=Image.open("path/to/image.jpg"),
+    k=3
+)
+
+for label, prob in results:
+    print(f"{label}: {prob:.4f}")
+```
+
+### 3. Training & Evaluation (Work in Progress)
+Execute the training pipeline using configuration files:
 ```bash
 python scripts/train.py --config configs/default.yaml
 ```
 
-### 평가 실행
-```bash
-python scripts/evaluate.py --model_path models/best_model.pt
-```
+## 📊 Model Details
 
-## 모델
+- **Base Model**: [KoCLIP (Bingsu/clip-vit-base-patch32-ko)](https://huggingface.co/Bingsu/clip-vit-base-patch32-ko)
+- **Temperature**: 0.07 (default)
+- **Classification Method**: Semantic similarity between input embeddings and label embeddings.
 
-- **KoCLIP**: 한국어 특화 CLIP 모델 (`Bingsu/clip-vit-base-patch32-ko`)
-- **Task**: 44개 민원 유형 분류
+## 📜 License
 
-## 데이터
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-민원 데이터는 이미지와 텍스트로 구성됩니다.
-
-## 실험
-
-실험 결과는 `experiments/` 디렉토리에 저장됩니다.
-
-## 라이선스
-
-MIT License
 
